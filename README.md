@@ -481,4 +481,4 @@ head -20 README.md
 wc -l README.md
 ```
 
-The README is complete and ready to be included in your project submission!
+The README is complete and ready to be implement!
