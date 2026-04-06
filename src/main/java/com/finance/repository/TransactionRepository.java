@@ -1,0 +1,34 @@
+package com.finance.repository;
+
+
+// src/main/java/com/finance/repository/TransactionRepository.java
+
+import com.finance.model.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import java.time.LocalDate;
+import java.util.List;
+
+@Repository
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    List<Transaction> findByUserIdAndDeletedFalseOrderByTransactionDateDesc(Long userId);
+
+    List<Transaction> findByUserIdAndDeletedFalseAndTransactionDateBetweenOrderByTransactionDateDesc(
+            Long userId, LocalDate startDate, LocalDate endDate);
+
+    List<Transaction> findByUserIdAndDeletedFalseAndType(Long userId, String type);
+
+    List<Transaction> findByUserIdAndDeletedFalseAndCategory(Long userId, String category);
+
+    @Query("SELECT t FROM Transaction t WHERE t.userId = :userId AND t.deleted = false " +
+            "AND (:category IS NULL OR t.category = :category) " +
+            "AND (:type IS NULL OR t.type = :type) " +
+            "ORDER BY t.transactionDate DESC")
+    List<Transaction> findByFilters(@Param("userId") Long userId,
+                                    @Param("category") String category,
+                                    @Param("type") String type);
+
+    long countByUserIdAndDeletedFalse(Long userId);
+}
